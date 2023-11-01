@@ -1,0 +1,39 @@
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  prepare-environment:
+    runs-on: self-hosted
+    steps:
+      - name: Stop all containers
+        continue-on-error: true
+        run: docker stop $(docker ps -a -q) && docker rm $(docker ps -a -q)
+      - name: Remove unused data
+        continue-on-error: true
+        run: docker system prune -a -f
+
+  deploy:
+    runs-on: self-hosted
+    needs: prepare-environment
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+        
+      - name: Crete deploy script
+        shell: bash
+        run: echo "${RUN_COMMAND}" > /tmp/deploy_dev.sh
+        env:
+          RUN_COMMAND: |
+             cd /var/work/exchange_pwa/template/ &&
+             git config --global --add safe.directory /var/work/exchange_pwa &&
+             git pull &&
+             docker compose up -d --build
+      - name: Give execute permissions to deploy script
+        run: chmod +x /tmp/deploy_dev.sh
+
+      - name: Run deploy script
+        run: /tmp/deploy_dev.sh
+      - name: Clean-up
+        run: rm -f /tmp/deploy_dev.sh
