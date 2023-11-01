@@ -26,6 +26,7 @@ jobs:
         run: echo "${RUN_COMMAND}" > /tmp/deploy_dev.sh
         env:
           RUN_COMMAND: |
+             git config --global --add safe.directory /var/work/exchange_pwa &&
              cd /var/work/exchange_pwa/template/ &&
              git pull &&
              docker compose up -d --build
