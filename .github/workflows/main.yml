@@ -12,5 +12,7 @@ jobs:
         run: git pull
       - name: Go to the working dir
         run: cd /var/work/exchange_pwa/template/
+      - name: test
+        run: ls
       - name: Rebuild and restart docker
         run: docker-compose up -d --build
