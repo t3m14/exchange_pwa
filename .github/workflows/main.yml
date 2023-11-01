@@ -11,6 +11,6 @@ jobs:
         continue-on-error: true
         run: git pull
       - name: Go to the working dir
-        run: cd /var/work/exchange_pwa/templates
+        run: cd /var/work/exchange_pwa/template/
       - name: Rebuild and restart docker
         run: docker-compose up -d --build
