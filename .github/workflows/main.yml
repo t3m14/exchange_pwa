@@ -31,7 +31,7 @@ jobs:
              docker compose up -d --build
       - name: Give execute permissions to deploy script
         run: chmod +x /tmp/deploy_dev.sh
-      - name: Make an exception:
+      - name: Make an exception
         run: git config --global --add safe.directory /var/work/exchange_pwa
       - name: Run deploy script
         run: /tmp/deploy_dev.sh
