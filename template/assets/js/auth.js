@@ -50,7 +50,7 @@ function fetchWithAuth(url, options) {
             } 
             catch (error)
             { // если тут что-то пошло не так, то перенаправляем пользователя на страницу авторизации
-                return  window.location.replace(loginUrl);
+                // return  window.location.replace(loginUrl);
                 console.log(error)
             }
         }
@@ -58,7 +58,10 @@ function fetchWithAuth(url, options) {
         options.headers.Authorization = `JWT ${tokenData.access}`; // добавляем токен в headers запроса
     }
     console.log(options);
-    return fetch(url, options); // возвращаем изначальную функцию, но уже с валидным токеном в headers
+    try{
+        return fetch(url, options); // возвращаем изначальную функцию, но уже с валидным токеном в headers
+    }
+    catch (error){}
 }
 
 function do_login(){
@@ -102,19 +105,17 @@ function getTokenData(username, password) {
             do_login();
         });
 }
-function make_login(){
-    const signInForm = document.getElementById('signInForm');
-    signInForm.addEventListener('submit', getFormValue);
-    async function getFormValue(event) {
-        event.preventDefault();
-        const username = signInForm.querySelector('[name="username"]'); //получаем поле name
-        const password = signInForm.querySelector('[name="password"]'); //получаем поле name
-
-        await getTokenData(username.value, password.value);
-    }
+async function getFormValue(event) {
+    event.preventDefault();
+    const username = signInForm.querySelector('[name="username"]'); //получаем поле name
+    const password = signInForm.querySelector('[name="password"]'); //получаем поле name
+    
+    await getTokenData(username.value, password.value);
 }
+
 function showBalance(res) {
     console.log(res);
+    console.log(1)
     try {
     document.getElementById("rdw_balance").innerHTML = res.balance_rdw;
     document.getElementById("usd_balance").innerHTML = res.balance_usd;
@@ -122,30 +123,34 @@ function showBalance(res) {
 }
 
 function getBalance() {
-    try{
 
-        return fetchWithAuth("http://127.0.0.1:8000/api/v1/auth/users/me/"
-        ,{
-            method: 'GET',
-            credentials: 'include',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-            }
-        })
-           .then(res => res.json())
-           .then(res => showBalance(res))
-    }
-    catch(error){}
+    return fetchWithAuth("http://127.0.0.1:8000/api/v1/auth/users/me/"
+    ,{
+        method: 'GET',
+        credentials: 'include',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+        }
+    })
+        .then((res) => {
+        if (res.status != 200) {
+            return  window.location.replace("signin.html");
+        }
+        else{
+            res.json().then((res) => showBalance(res))
+        }})
+       
 }
-try {
-    make_login();
 
-} catch (error) {
-    console.log(error);
-}
-try {
+
+if(document.getElementById("rdw_balance")){
+    console.log(1)
     getBalance();
-} catch (error) {
-    console.log(error);
+}
+if (document.getElementById('signInForm')){
+    console.log(2)
+    const signInForm = document.getElementById('signInForm');
+    signInForm.addEventListener('submit', getFormValue);
+
 }
