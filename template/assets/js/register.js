@@ -8,7 +8,7 @@ data.append('passport_image', '');
 
 function register() {
     console.log(data);
-    return fetch('http://127.0.0.1:8000/api/v1/auth/users/', {
+    return fetch('http://147.182.137.98:8000/api/v1/auth/users/', {
         method: 'POST',
         credentials: 'include',
         body: data,
