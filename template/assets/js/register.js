@@ -18,7 +18,7 @@ function register() {
             if (res.status === 201) {
                 const respData = res.json();
                 respData.then((res) => console.log(res))
-                return  window.location.replace("signin.html");
+                return  window.location.replace("otp.html");
             }
         });
 }
